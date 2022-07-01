@@ -1,61 +1,126 @@
 package br.com.alura.aluvery.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.Composable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import br.com.alura.aluvery.R
-import br.com.alura.aluvery.model.Product
+import br.com.alura.aluvery.model.MappedProducts
+import br.com.alura.aluvery.sampledata.sampleMappedProducts
 import br.com.alura.aluvery.sampledata.sampleProducts
+import br.com.alura.aluvery.ui.components.CardProductItem
 import br.com.alura.aluvery.ui.components.ProductsSection
-import java.math.BigDecimal
+import br.com.alura.aluvery.ui.components.SearchTextField
 
 @Composable
-fun HomeScreen() {
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Spacer(Modifier)
-        ProductsSection("Promoções", sampleProducts)
-        ProductsSection(
-            "Doces", listOf(
-                Product(
-                    name = "Chocolate",
-                    price = BigDecimal("5.99"),
-                    image = R.drawable.chocolate
-                )
+fun HomeScreen(
+    mappedProducts: List<MappedProducts>,
+    desiredProduct: String,
+    onDesiredTextChange: (String) -> Unit
+) {
+    Box {
+        val state = rememberLazyListState()
+        val showTextField by remember {
+            derivedStateOf {
+                state.firstVisibleItemIndex == 0
+                        || !state.isScrollInProgress
+            }
+        }
+        AnimatedVisibility(visible = desiredProduct.isNotBlank()) {
+            val products = sampleProducts.filter {
+                it.name.toUpperCase(Locale.current)
+                    .contains(desiredProduct.toUpperCase(Locale.current))
+                        || it.description.toUpperCase(Locale.current)
+                    .contains(desiredProduct.toUpperCase(Locale.current))
+            }
+            LazyColumn(
+                Modifier
+                    .fillMaxSize(),
+                state = state,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(72.dp))
+                }
+                items(products) { product ->
+                    CardProductItem(product)
+                }
+            }
+        }
+        AnimatedVisibility(visible = desiredProduct.isBlank()) {
+            Sections(state, mappedProducts)
+        }
+        AnimatedVisibility(
+            visible = showTextField,
+            enter = expandVertically(
+                animationSpec = tween(delayMillis = 500)
+            ),
+            exit = slideOutVertically(
+                animationSpec = tween(200)
             )
-        )
-        ProductsSection(
-            "Bebidas", listOf(
-                Product(
-                    name = "Cerveja",
-                    price = BigDecimal("9.99"),
-                    image = R.drawable.beer
-                ),
-                Product(
-                    name = "Refrigerante",
-                    price = BigDecimal("3.99"),
-                    image = R.drawable.soda
-                ),
-
-                )
-        )
-        Spacer(Modifier)
+        ) {
+            SearchTextField(
+                value = desiredProduct,
+                onValueChange = onDesiredTextChange,
+                Modifier.padding(8.dp)
+            )
+        }
     }
 }
+
+
+@Composable
+private fun Sections(
+    state: LazyListState,
+    mappedProducts: List<MappedProducts>
+) {
+    LazyColumn(
+        Modifier
+            .fillMaxSize(),
+        state = state,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(vertical = 16.dp)
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(72.dp))
+        }
+        items(mappedProducts) { mappedProduct ->
+            ProductsSection(
+                title = mappedProduct.title,
+                products = mappedProduct.products
+            )
+        }
+    }
+}
+
 
 @Preview(showSystemUi = true)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(
+        sampleMappedProducts,
+        desiredProduct = "",
+        onDesiredTextChange = {}
+    )
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun HomeScreenWithDesiredTextPreview() {
+    HomeScreen(
+        sampleMappedProducts,
+        desiredProduct = "a",
+        onDesiredTextChange = {}
+    )
 }

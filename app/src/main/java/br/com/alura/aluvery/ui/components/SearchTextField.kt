@@ -59,10 +59,14 @@ fun SearchTextField(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFCECECE)
+@Preview
 @Composable
-fun SearchTextFieldPreview() {
-    SearchTextField(value = "", onValueChange = {
+private fun SearchTextFieldPreview() {
+    SearchTextField(value = "", onValueChange = {})
+}
 
-    })
+@Preview
+@Composable
+fun SearchTextFieldWithTextPreview() {
+    SearchTextField(value = "sample", onValueChange = {})
 }

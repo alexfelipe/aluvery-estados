@@ -4,19 +4,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import br.com.alura.aluvery.R
 import br.com.alura.aluvery.extensions.toBrazilianCurrency
@@ -27,23 +23,18 @@ import kotlin.random.Random
 
 @Composable
 fun CardProductItem(
-    product: Product
+    product: Product,
+    modifier: Modifier = Modifier,
+    showDescription: Boolean = false,
+    onClick: () -> Unit = {},
+    elevation: Dp = 4.dp
 ) {
-    var showDescription by rememberSaveable {
-        mutableStateOf(false)
-    }
     Card(
-        Modifier
-            .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            )
+        modifier
             .fillMaxWidth()
             .heightIn(150.dp)
-            .clickable {
-                showDescription = !showDescription
-            },
-        shape = RoundedCornerShape(8.dp),
+            .clickable(onClick = onClick),
+        elevation = elevation
     ) {
         Column {
             AsyncImage(
@@ -85,6 +76,23 @@ fun CardProductItem(
 
 @Preview
 @Composable
-fun CardProductItemPreview() {
-    CardProductItem(product = sampleProducts[Random.nextInt(sampleProducts.size)])
+private fun CardProductItemPreview() {
+    CardProductItem(
+        product = sampleProducts[Random.nextInt(sampleProducts.size)],
+    )
+}
+
+@Preview
+@Composable
+fun ExpandedCardProductItemPreview() {
+    var showDescription by remember {
+        mutableStateOf(true)
+    }
+    CardProductItem(
+        product = sampleProducts[Random.nextInt(sampleProducts.size)],
+        showDescription = true,
+        onClick = {
+            showDescription = !showDescription
+        }
+    )
 }

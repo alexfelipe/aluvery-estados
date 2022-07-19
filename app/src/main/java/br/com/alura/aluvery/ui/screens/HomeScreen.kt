@@ -6,11 +6,12 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,11 +27,12 @@ import br.com.alura.aluvery.ui.components.SearchTextField
 fun HomeScreen(
     mappedProducts: List<MappedProducts>,
     desiredProduct: String,
-    onDesiredTextChange: (String) -> Unit
+    onDesiredTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Box {
+    Box(modifier) {
         val state = rememberLazyListState()
-        val showTextField by remember {
+        val showSearchTextField by remember {
             derivedStateOf {
                 state.firstVisibleItemIndex == 0
                         || !state.isScrollInProgress
@@ -54,15 +56,43 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(72.dp))
                 }
                 items(products) { product ->
-                    CardProductItem(product)
+                    var showDescription by remember {
+                        mutableStateOf(false)
+                    }
+                    CardProductItem(
+                        product,
+                        Modifier
+                            .padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        showDescription = showDescription,
+                        onClick = {
+                            showDescription = !showDescription
+                        }
+                    )
                 }
             }
         }
         AnimatedVisibility(visible = desiredProduct.isBlank()) {
-            Sections(state, mappedProducts)
+            LazyColumn(
+                Modifier
+                    .fillMaxSize(),
+                state = state,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(72.dp))
+                }
+                items(mappedProducts) { mappedProduct ->
+                    ProductsSection(
+                        title = mappedProduct.title,
+                        products = mappedProduct.products
+                    )
+                }
+            }
         }
         AnimatedVisibility(
-            visible = showTextField,
+            visible = showSearchTextField,
             enter = expandVertically(
                 animationSpec = tween(delayMillis = 500)
             ),
@@ -78,32 +108,6 @@ fun HomeScreen(
         }
     }
 }
-
-
-@Composable
-private fun Sections(
-    state: LazyListState,
-    mappedProducts: List<MappedProducts>
-) {
-    LazyColumn(
-        Modifier
-            .fillMaxSize(),
-        state = state,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(72.dp))
-        }
-        items(mappedProducts) { mappedProduct ->
-            ProductsSection(
-                title = mappedProduct.title,
-                products = mappedProduct.products
-            )
-        }
-    }
-}
-
 
 @Preview(showSystemUi = true)
 @Composable

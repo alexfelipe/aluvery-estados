@@ -10,10 +10,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.com.alura.aluvery.R
 import br.com.alura.aluvery.model.Product
 import br.com.alura.aluvery.sampledata.sampleProducts
-import java.math.BigDecimal
 
 @Composable
 fun ProductsSection(

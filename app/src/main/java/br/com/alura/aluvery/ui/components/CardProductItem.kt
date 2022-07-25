@@ -56,14 +56,11 @@ fun CardProductItem(
                     color = MaterialTheme.colors.onSecondary
                 )
             }
-            // TODO: adicionar descrição do produto
-            if (product.description.isNotBlank()) {
-                Text(
-                    text = product.description,
-                    Modifier
-                        .padding(16.dp)
-                )
-            }
+            Text(
+                text = product.description,
+                Modifier
+                    .padding(16.dp)
+            )
         }
     }
 }

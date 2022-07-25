@@ -1,11 +1,14 @@
 package br.com.alura.aluvery.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -25,10 +28,17 @@ fun CardProductItem(
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp
 ) {
+    Log.i("CardProductItem", "creating the compose: ${product.name} composable key: ${currentCompositeKeyHash}")
+    var expanded by rememberSaveable {
+        mutableStateOf(false)
+    }
     Card(
         modifier
             .fillMaxWidth()
-            .heightIn(150.dp),
+            .heightIn(150.dp)
+            .clickable {
+                expanded = !expanded
+            },
         elevation = elevation
     ) {
         Column {
@@ -56,11 +66,15 @@ fun CardProductItem(
                     color = MaterialTheme.colors.onSecondary
                 )
             }
-            Text(
-                text = product.description,
-                Modifier
-                    .padding(16.dp)
-            )
+            if (product.description.isNotBlank() &&
+                expanded
+            ) {
+                Text(
+                    text = product.description,
+                    Modifier
+                        .padding(16.dp)
+                )
+            }
         }
     }
 }

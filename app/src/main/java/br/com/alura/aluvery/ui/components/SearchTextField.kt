@@ -9,22 +9,17 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SearchTextField() {
-    var searchedText: MutableState<String> = remember {
-        mutableStateOf("")
-    }
+fun SearchTextField(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
     OutlinedTextField(
-        value = searchedText.value,
-        onValueChange = {
-            searchedText.value = it
-        },
+        value = value,
+        onValueChange = onValueChange,
         Modifier
             .padding(16.dp)
             .fillMaxWidth(),

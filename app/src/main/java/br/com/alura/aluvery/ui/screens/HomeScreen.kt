@@ -3,16 +3,7 @@ package br.com.alura.aluvery.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,11 +19,13 @@ fun HomeScreen(
     sections: List<MappedProducts>
 ) {
     Column {
-        var searchedText: MutableState<String> = remember {
+        var searchedText by remember {
             mutableStateOf("")
         }
-        SearchTextField()
-        if (searchedText.value.isNotBlank()) {
+        SearchTextField(searchedText, onValueChange = {
+            searchedText = it
+        })
+        if (searchedText.isNotBlank()) {
             LazyColumn(
                 Modifier
                     .fillMaxSize(),
@@ -40,8 +33,8 @@ fun HomeScreen(
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
                 items(sampleProducts.filter {
-                    it.name.contains(searchedText.value, true) ||
-                            it.description.contains(searchedText.value, true)
+                    it.name.contains(searchedText, true) ||
+                            it.description.contains(searchedText, true)
                 }) { product ->
                     CardProductItem(
                         product = product,

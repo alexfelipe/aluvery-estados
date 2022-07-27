@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,8 +23,6 @@ import androidx.compose.ui.unit.sp
 import br.com.alura.aluvery.R
 import br.com.alura.aluvery.extensions.toBrazilianCurrency
 import br.com.alura.aluvery.model.Product
-import br.com.alura.aluvery.ui.theme.Purple500
-import br.com.alura.aluvery.ui.theme.Teal200
 import coil.compose.AsyncImage
 import java.math.BigDecimal
 
@@ -49,7 +48,8 @@ fun ProductItem(
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
-                                Purple500, Teal200
+                                MaterialTheme.colors.primary,
+                                MaterialTheme.colors.secondary
                             )
                         )
                     )

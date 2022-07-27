@@ -68,16 +68,14 @@ fun CardProductItem(
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colors.secondary)
+                    .background(MaterialTheme.colors.primaryVariant)
                     .padding(16.dp)
             ) {
                 Text(
-                    text = product.name,
-                    color = MaterialTheme.colors.onSecondary
+                    text = product.name
                 )
                 Text(
-                    text = product.price.toBrazilianCurrency(),
-                    color = MaterialTheme.colors.onSecondary
+                    text = product.price.toBrazilianCurrency()
                 )
             }
             if (product.description.isNotBlank() &&
@@ -98,5 +96,15 @@ fun CardProductItem(
 private fun CardProductItemPreview() {
     CardProductItem(
         product = sampleProducts[Random.nextInt(sampleProducts.size)],
+    )
+}
+
+@Preview
+@Composable
+fun CardProductItemWithDescription() {
+    CardProductItem(
+        product = sampleProducts[Random.nextInt(sampleProducts.size)],
+        expanded = true,
+        onClick = {}
     )
 }

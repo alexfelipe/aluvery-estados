@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class SignUpState(
 
@@ -17,16 +16,14 @@ class SignUpState(
     var confirmPassword by mutableStateOf("")
 
     fun signUp() {
-
         if (password != confirmPassword) {
             throw IllegalStateException("not same password")
         }
     }
-
 }
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(onSignUp: () -> Unit = {}) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember {
         SnackbarHostState()
@@ -82,7 +79,8 @@ fun SignUpScreen() {
         Button(
             onClick = {
                 try {
-                    state.signUp()
+                    // TODO add logic to sign up
+                    onSignUp()
                 } catch (e: Exception) {
                     e.message?.let {
                         scope.launch {
@@ -103,5 +101,7 @@ fun SignUpScreen() {
 @Preview(showBackground = true)
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen()
+    SignUpScreen {
+
+    }
 }

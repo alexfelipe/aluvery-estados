@@ -15,28 +15,30 @@ import br.com.alura.aluvery.model.User
 import br.com.alura.aluvery.ui.theme.AluveryTheme
 import kotlinx.coroutines.launch
 
+private val users = listOf(
+    User("Alex", "alex1234")
+)
+
+
 class SignInState(
     user: String = "",
     password: String = ""
 ) {
-
     var user by mutableStateOf(user)
+
     var password by mutableStateOf(password)
 
     fun authenticate() = users.contains(User(user, password))
-
 }
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    onSignIn: (String) -> Unit = {},
+    onSignUp: () -> Unit = {}
+) {
     val state = remember {
         SignInState()
     }
-    val scope = rememberCoroutineScope()
-    val snackbarState = remember {
-        SnackbarHostState()
-    }
-    SnackbarHost(hostState = snackbarState)
     Column(Modifier.fillMaxSize()) {
         TextField(
             value = state.user,
@@ -66,12 +68,8 @@ fun SignInScreen() {
         )
         Button(
             onClick = {
-                val message = if (state.authenticate()) {
-                    "authenticated"
-                } else "not authenticate"
-                scope.launch {
-                    snackbarState.showSnackbar(message)
-                }
+                // TODO add the logic to authenticate user
+                onSignIn(state.user)
             },
             Modifier
                 .padding(8.dp)
@@ -81,9 +79,7 @@ fun SignInScreen() {
         }
         TextButton(
             onClick = {
-                scope.launch {
-                    snackbarState.showSnackbar("sign up")
-                }
+                onSignUp()
             },
             Modifier
                 .padding(horizontal = 8.dp)
@@ -103,7 +99,3 @@ fun SignInScreenPreview() {
         }
     }
 }
-
-private val users = listOf<User>(
-    User("Alex", "alex1234")
-)

@@ -4,7 +4,10 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Surface
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,13 +22,15 @@ import br.com.alura.aluvery.ui.theme.AluveryTheme
 
 @Composable
 fun HomeScreen(
-    sections: List<MappedProducts>
+    modifier: Modifier = Modifier,
+    sections: List<MappedProducts> = sampleMappedProducts
 ) {
     var searchText by remember {
-        mutableStateOf("value")
+        mutableStateOf("")
     }
     HomeScreen(
         sections = sections,
+        modifier,
         value = searchText,
         onValueChange = {
             searchText = it
@@ -36,10 +41,11 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     sections: List<MappedProducts>,
+    modifier: Modifier = Modifier,
     value: String = "",
-    onValueChange: (String) -> Unit = {}
+    onValueChange: (String) -> Unit = {},
 ) {
-    Column {
+    Column(modifier) {
         SearchTextField(value, onValueChange = onValueChange)
         if (value.isNotBlank()) {
             LazyColumn(
@@ -83,7 +89,7 @@ fun HomeScreenWithSearchTextPreview() {
         Surface {
             HomeScreen(
                 sections = sampleMappedProducts,
-                "a"
+                value = "a"
             )
         }
     }
@@ -101,7 +107,9 @@ private fun HomeScreenPreview() {
         Surface {
             HomeScreen(
                 sampleMappedProducts
-            )
+            ) {
+
+            }
         }
     }
 }

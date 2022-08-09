@@ -4,16 +4,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.com.alura.aluvery.model.User
 import br.com.alura.aluvery.ui.theme.AluveryTheme
 import kotlinx.coroutines.launch
 
-class AuthenticationState(
+class SignInState(
     user: String = "",
     password: String = ""
 ) {
@@ -26,9 +28,9 @@ class AuthenticationState(
 }
 
 @Composable
-fun AuthenticationScreen() {
+fun SignInScreen() {
     val state = remember {
-        AuthenticationState()
+        SignInState()
     }
     val scope = rememberCoroutineScope()
     val snackbarState = remember {
@@ -57,7 +59,10 @@ fun AuthenticationScreen() {
                 .fillMaxWidth(),
             placeholder = {
                 Text(text = "Password")
-            }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password
+            )
         )
         Button(
             onClick = {
@@ -89,16 +94,16 @@ fun AuthenticationScreen() {
     }
 }
 
-private val users = listOf<User>(
-    User("Alex", "alex1234")
-)
-
 @Preview
 @Composable
-fun AuthenticationScreenPreview() {
+fun SignInScreenPreview() {
     AluveryTheme {
         Surface {
-            AuthenticationScreen()
+            SignInScreen()
         }
     }
 }
+
+private val users = listOf<User>(
+    User("Alex", "alex1234")
+)

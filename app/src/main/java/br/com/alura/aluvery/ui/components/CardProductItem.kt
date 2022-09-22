@@ -24,44 +24,44 @@ import java.math.BigDecimal
 
 @Composable
 fun CardProductItem(
-        product: Product,
-        modifier: Modifier = Modifier,
-        elevation: Dp = 4.dp
+    product: Product,
+    modifier: Modifier = Modifier,
+    elevation: Dp = 4.dp
 ) {
     Card(
-            modifier
-                    .fillMaxWidth()
-                    .heightIn(150.dp),
-            elevation = elevation
+        modifier
+            .fillMaxWidth()
+            .heightIn(150.dp),
+        elevation = elevation
     ) {
         Column {
             AsyncImage(
-                    model = product.image,
-                    contentDescription = null,
-                    Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                    placeholder = painterResource(id = R.drawable.placeholder),
-                    contentScale = ContentScale.Crop
+                model = product.image,
+                contentDescription = null,
+                Modifier
+                    .fillMaxWidth()
+                    .height(100.dp),
+                placeholder = painterResource(id = R.drawable.placeholder),
+                contentScale = ContentScale.Crop
             )
             Column(
-                    Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colors.primaryVariant)
-                            .padding(16.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.primaryVariant)
+                    .padding(16.dp)
             ) {
                 Text(
-                        text = product.name
+                    text = product.name
                 )
                 Text(
-                        text = product.price.toBrazilianCurrency()
+                    text = product.price.toBrazilianCurrency()
                 )
             }
             product.description?.let {
                 Text(
-                        text = product.description,
-                        Modifier
-                                .padding(16.dp)
+                    text = product.description,
+                    Modifier
+                        .padding(16.dp)
                 )
             }
         }
@@ -74,10 +74,10 @@ private fun CardProductItemPreview() {
     AluveryTheme {
         Surface {
             CardProductItem(
-                    product = Product(
-                            name = "teste",
-                            price = BigDecimal("9.99")
-                    ),
+                product = Product(
+                    name = "teste",
+                    price = BigDecimal("9.99")
+                ),
             )
         }
     }
@@ -88,11 +88,13 @@ private fun CardProductItemPreview() {
 fun CardProductItemWithDescriptionPreview() {
     AluveryTheme {
         Surface {
-            CardProductItem(product = Product(
-                    "teste",
-                    BigDecimal("9.99"),
+            CardProductItem(
+                product = Product(
+                    name = "teste",
+                    price = BigDecimal("9.99"),
                     description = LoremIpsum(50).values.first(),
-            ))
+                )
+            )
         }
     }
 }

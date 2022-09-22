@@ -18,41 +18,42 @@ import br.com.alura.aluvery.ui.theme.AluveryTheme
 
 @Composable
 fun HomeScreen(
-        sections: Map<String, List<Product>>,
-        searchText: String = ""
+    sections: Map<String, List<Product>>,
+    modifier: Modifier = Modifier,
+    searchText: String = ""
 ) {
-    Column {
+    Column(modifier) {
         var text by remember {
             mutableStateOf(searchText)
         }
         SearchTextField(
-                searchText = text,
-                onSearchChange = {
-                    text = it
-                },
-                Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
+            searchText = text,
+            onSearchChange = {
+                text = it
+            },
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
         )
         val searchedProducts = remember(text) {
             if (text.isNotBlank()) {
                 sampleProducts.filter { product ->
                     product.name.contains(
-                            text,
-                            ignoreCase = true,
+                        text,
+                        ignoreCase = true,
                     ) ||
                             product.description?.contains(
-                                    text,
-                                    ignoreCase = true,
+                                text,
+                                ignoreCase = true,
                             ) ?: false
                 }
             } else emptyList()
         }
         LazyColumn(
-                Modifier
-                        .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
+            Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             if (text.isBlank()) {
                 for (section in sections) {
@@ -60,16 +61,16 @@ fun HomeScreen(
                     val products = section.value
                     item {
                         ProductsSection(
-                                title = title,
-                                products = products
+                            title = title,
+                            products = products
                         )
                     }
                 }
             } else {
                 items(searchedProducts) { p ->
                     CardProductItem(
-                            product = p,
-                            Modifier.padding(horizontal = 16.dp),
+                        product = p,
+                        Modifier.padding(horizontal = 16.dp),
                     )
                 }
             }
@@ -93,8 +94,8 @@ fun HomeScreenWithSearchTextPreview() {
     AluveryTheme {
         Surface {
             HomeScreen(
-                    sampleSections,
-                    searchText = "a",
+                sampleSections,
+                searchText = "a",
             )
         }
     }

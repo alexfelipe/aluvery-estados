@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import br.com.alura.aluvery.dao.ProductDao
+import br.com.alura.aluvery.model.Category
 import br.com.alura.aluvery.model.Product
 import br.com.alura.aluvery.sampledata.sampleSections
 import br.com.alura.aluvery.ui.activities.FormProductActivity
@@ -44,10 +45,16 @@ class MainActivity : ComponentActivity() {
                 }
             ) {
                 val products by dao.products.collectAsState(initial = emptyList())
-                val sections = mapOf(
-                    "Todos produtos" to products
-                )
-                Log.i("MainActivity", "onCreate: $sections")
+                val sections = remember(products) {
+                    mutableMapOf("Todos produtos" to products) + Category.values()
+                        .associate { category ->
+                            category.label to products.filter { product ->
+                                product.categories.contains(
+                                    category
+                                )
+                            }
+                        }
+                }
                 HomeScreen(
                     sections = sections,
                     Modifier.padding(it),

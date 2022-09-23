@@ -8,6 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.com.alura.aluvery.dao.ProductDao
+import br.com.alura.aluvery.model.Category
 import br.com.alura.aluvery.model.Product
 import br.com.alura.aluvery.sampledata.sampleProducts
 import br.com.alura.aluvery.sampledata.sampleSections
@@ -15,6 +17,22 @@ import br.com.alura.aluvery.ui.components.CardProductItem
 import br.com.alura.aluvery.ui.components.ProductsSection
 import br.com.alura.aluvery.ui.components.SearchTextField
 import br.com.alura.aluvery.ui.theme.AluveryTheme
+
+@Composable
+fun HomeScreen(dao: ProductDao){
+    val products by dao.products.collectAsState(initial = emptyList())
+    val sections = remember(products) {
+        mutableMapOf("Todos produtos" to products) + Category.values()
+            .associate { category ->
+                category.label to products.filter { product ->
+                    product.categories.contains(
+                        category
+                    )
+                }
+            }
+    }
+    HomeScreen(sections = sections)
+}
 
 @Composable
 fun HomeScreen(
@@ -35,6 +53,8 @@ fun HomeScreen(
                 .padding(16.dp)
                 .fillMaxWidth(),
         )
+
+        //TODO melhorar a busca dos produtos filtrados
         val searchedProducts = remember(text) {
             if (text.isNotBlank()) {
                 sampleProducts.filter { product ->

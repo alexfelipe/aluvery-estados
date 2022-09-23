@@ -44,21 +44,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             ) {
-                val products by dao.products.collectAsState(initial = emptyList())
-                val sections = remember(products) {
-                    mutableMapOf("Todos produtos" to products) + Category.values()
-                        .associate { category ->
-                            category.label to products.filter { product ->
-                                product.categories.contains(
-                                    category
-                                )
-                            }
-                        }
-                }
-                HomeScreen(
-                    sections = sections,
-                    Modifier.padding(it),
-                )
+                HomeScreen(dao)
             }
         }
     }

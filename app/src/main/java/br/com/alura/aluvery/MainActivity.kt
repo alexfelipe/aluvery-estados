@@ -25,6 +25,7 @@ import br.com.alura.aluvery.model.Product
 import br.com.alura.aluvery.sampledata.sampleSections
 import br.com.alura.aluvery.ui.activities.FormProductActivity
 import br.com.alura.aluvery.ui.screens.HomeScreen
+import br.com.alura.aluvery.ui.screens.HomeScreenState
 import br.com.alura.aluvery.ui.theme.AluveryTheme
 import kotlinx.coroutines.flow.collect
 
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             ) {
-                HomeScreen(dao)
+                HomeScreen(HomeScreenState(dao))
             }
         }
     }

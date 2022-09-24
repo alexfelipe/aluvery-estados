@@ -17,65 +17,50 @@ import br.com.alura.aluvery.ui.components.CardProductItem
 import br.com.alura.aluvery.ui.components.ProductsSection
 import br.com.alura.aluvery.ui.components.SearchTextField
 import br.com.alura.aluvery.ui.theme.AluveryTheme
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 
 @Composable
-fun HomeScreen(dao: ProductDao){
-    val products by dao.products.collectAsState(initial = emptyList())
-    val sections = remember(products) {
-        mutableMapOf("Todos produtos" to products) + Category.values()
-            .associate { category ->
-                category.label to products.filter { product ->
-                    product.categories.contains(
-                        category
-                    )
-                }
-            }
+fun HomeScreen(state: HomeScreenState) {
+    val sections by state.sections
+        .collectAsState(initial = emptyMap())
+    var text by remember {
+        mutableStateOf("")
     }
-    HomeScreen(sections = sections)
+    val products by state.filterProducts(text)
+        .collectAsState(initial = emptyList())
+    HomeScreen(
+        sections = sections,
+        searchedProducts = products,
+        searchText = text
+    ) {
+        text = it
+    }
 }
 
 @Composable
 fun HomeScreen(
     sections: Map<String, List<Product>>,
+    searchedProducts: List<Product>,
     modifier: Modifier = Modifier,
-    searchText: String = ""
+    searchText: String = "",
+    onSearchTextChange: (String) -> Unit = {}
 ) {
     Column(modifier) {
-        var text by remember {
-            mutableStateOf(searchText)
-        }
         SearchTextField(
-            searchText = text,
-            onSearchChange = {
-                text = it
-            },
+            searchText = searchText,
+            onSearchChange = onSearchTextChange,
             Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
         )
-
-        //TODO melhorar a busca dos produtos filtrados
-        val searchedProducts = remember(text) {
-            if (text.isNotBlank()) {
-                sampleProducts.filter { product ->
-                    product.name.contains(
-                        text,
-                        ignoreCase = true,
-                    ) ||
-                            product.description?.contains(
-                                text,
-                                ignoreCase = true,
-                            ) ?: false
-                }
-            } else emptyList()
-        }
         LazyColumn(
             Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            if (text.isBlank()) {
+            if (searchText.isBlank()) {
                 for (section in sections) {
                     val title = section.key
                     val products = section.value
@@ -98,12 +83,53 @@ fun HomeScreen(
     }
 }
 
+class HomeScreenState(
+    private val dao: ProductDao = ProductDao()
+) {
+
+    private fun products() = dao.products
+
+    val sections = flow {
+        products().collect { products ->
+            val sections = mutableMapOf("Todos produtos" to products) +
+                    Category.values().associate { category ->
+                        category.label to products.filter { product ->
+                            product.categories.contains(
+                                category
+                            )
+                        }
+                    }
+            emit(sections)
+        }
+    }
+
+    fun filterProducts(text: String) = flow {
+        if (text.isNotBlank()) {
+            val filteredProducts = products().first().filter { products ->
+                products.name.contains(
+                    text,
+                    ignoreCase = true,
+                ) ||
+                        products.description?.contains(
+                            text,
+                            ignoreCase = true,
+                        ) ?: false
+            }
+            emit(filteredProducts)
+        }
+    }
+
+}
+
 @Preview(showSystemUi = true)
 @Composable
 private fun HomeScreenPreview() {
     AluveryTheme {
         Surface {
-            HomeScreen(sampleSections)
+            HomeScreen(
+                sections = sampleSections,
+                searchedProducts = sampleProducts
+            )
         }
     }
 }
@@ -114,7 +140,8 @@ fun HomeScreenWithSearchTextPreview() {
     AluveryTheme {
         Surface {
             HomeScreen(
-                sampleSections,
+                sections = sampleSections,
+                searchedProducts = sampleProducts,
                 searchText = "a",
             )
         }

@@ -7,11 +7,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -24,6 +23,7 @@ import br.com.alura.aluvery.R
 import br.com.alura.aluvery.dao.ProductDao
 import br.com.alura.aluvery.model.Category
 import br.com.alura.aluvery.model.Product
+import br.com.alura.aluvery.ui.theme.AluveryTheme
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -37,12 +37,16 @@ class FormProductActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            FormVideoScreen(onSaveClick = {
-                lifecycleScope.launch {
-                    dao.save(it)
-                    finish()
+            AluveryTheme {
+                Surface {
+                    FormVideoScreen(onSaveClick = {
+                        lifecycleScope.launch {
+                            dao.save(it)
+                            finish()
+                        }
+                    })
                 }
-            })
+            }
         }
     }
 
@@ -50,25 +54,10 @@ class FormProductActivity : ComponentActivity() {
 
 @Composable
 fun FormVideoScreen(
-    imageUrl: String = "",
+    state: FormProductState = rememberFormProductScreenState(),
     onSaveClick: (Product) -> Unit = {}
 ) {
-    var urlState by remember {
-        mutableStateOf(imageUrl)
-    }
-    var nameState by remember {
-        mutableStateOf("")
-    }
-    var priceState by remember {
-        mutableStateOf("")
-    }
-    var descriptionState by remember {
-        mutableStateOf("")
-    }
-    val categoriesState = remember {
-        mutableStateListOf<Category>()
-    }
-    Log.i("FormProductActivity", "FormVideoScreen: $categoriesState")
+    rememberScaffoldState()
     LazyColumn(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -81,11 +70,10 @@ fun FormVideoScreen(
                 fontSize = 28.sp
             )
         }
-        //TODO implementar debounce
-        if (urlState.isNotBlank()) {
-            item {
+        item {
+            if (state.url.isNotBlank()) {
                 AsyncImage(
-                    model = urlState,
+                    model = state.url,
                     contentDescription = null,
                     Modifier
                         .height(200.dp)
@@ -98,9 +86,9 @@ fun FormVideoScreen(
         }
         item {
             TextField(
-                value = urlState,
+                value = state.url,
                 onValueChange = {
-                    urlState = it
+                    state.url = it
                 },
                 Modifier.fillMaxWidth(),
                 label = {
@@ -110,9 +98,9 @@ fun FormVideoScreen(
         }
         item {
             TextField(
-                value = nameState,
+                value = state.name,
                 onValueChange = {
-                    nameState = it
+                    state.name = it
                 },
                 Modifier.fillMaxWidth(),
                 label = {
@@ -122,9 +110,9 @@ fun FormVideoScreen(
         }
         item {
             TextField(
-                value = priceState,
+                value = state.price,
                 onValueChange = {
-                    priceState = it
+                    state.price = it
                 },
                 Modifier.fillMaxWidth(),
                 label = {
@@ -134,9 +122,9 @@ fun FormVideoScreen(
         }
         item {
             TextField(
-                value = descriptionState,
+                value = state.description,
                 onValueChange = {
-                    descriptionState = it
+                    state.description = it
                 },
                 Modifier
                     .fillMaxWidth()
@@ -160,12 +148,12 @@ fun FormVideoScreen(
                         Modifier
                             .fillMaxWidth()
                             .clickable {
-                                if(!isChecked) {
-                                    categoriesState.add(
+                                if (!isChecked) {
+                                    state.categories.add(
                                         category
                                     )
                                 } else {
-                                    categoriesState.remove(category)
+                                    state.categories.remove(category)
                                 }
                                 isChecked = !isChecked
                             },
@@ -175,12 +163,12 @@ fun FormVideoScreen(
                         Checkbox(
                             checked = isChecked,
                             onCheckedChange = {
-                                if(it) {
-                                    categoriesState.add(
+                                if (it) {
+                                    state.categories.add(
                                         category
                                     )
                                 } else {
-                                    categoriesState.remove(category)
+                                    state.categories.remove(category)
                                 }
                                 isChecked = it
                             },
@@ -193,21 +181,8 @@ fun FormVideoScreen(
         item {
             Button(
                 onClick = {
-                    val price = try {
-                        BigDecimal(priceState)
-                    } catch (e: Exception) {
-                        BigDecimal("0.00")
-                    }
-                    val categories = categoriesState.toList()
-                    Log.i("FormVideoActivity", "FormVideoScreen: $categories")
                     onSaveClick(
-                        Product(
-                            name = nameState,
-                            price = price,
-                            image = urlState,
-                            description = descriptionState,
-                            categories = categories
-                        )
+                        state.product()
                     )
                 },
                 Modifier.fillMaxWidth()
@@ -216,6 +191,51 @@ fun FormVideoScreen(
             }
         }
     }
+}
+
+@Composable
+fun rememberFormProductScreenState(
+    url: String = "",
+    name: String = "",
+    price: String = "",
+    description: String = ""
+) = remember {
+    FormProductState(
+        url = url,
+        name = name,
+        price = price,
+        description = description
+    )
+}
+
+class FormProductState(
+    url: String = "",
+    name: String = "",
+    price: String = "",
+    description: String = "",
+) {
+
+    var url by mutableStateOf(url)
+    var name by mutableStateOf(name)
+    var price by mutableStateOf(price)
+    var description by mutableStateOf(description)
+    val categories = mutableStateListOf<Category>()
+
+    fun product(): Product {
+        val verifiedPrice = try {
+            BigDecimal(price)
+        } catch (e: Exception) {
+            BigDecimal("0.00")
+        }
+        return Product(
+            name = name,
+            price = verifiedPrice,
+            image = url,
+            description = description,
+            categories = categories.toList()
+        )
+    }
+
 }
 
 @Preview(showBackground = true)
@@ -227,5 +247,5 @@ private fun FormProductScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun FormVideoScreenWithUrlForImageScreen() {
-    FormVideoScreen(imageUrl = "a")
+    FormVideoScreen(rememberFormProductScreenState(url = "a"))
 }

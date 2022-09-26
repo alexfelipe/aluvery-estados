@@ -80,6 +80,32 @@ fun HomeScreen(
                 }
             }
         }
+        LazyColumn(
+            Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
+            if (searchText.isBlank()) {
+                for (section in sections) {
+                    val title = section.key
+                    val products = section.value
+                    item {
+                        ProductsSection(
+                            title = title,
+                            products = products
+                        )
+                    }
+                }
+            } else {
+                items(searchedProducts) { p ->
+                    CardProductItem(
+                        product = p,
+                        Modifier.padding(horizontal = 16.dp),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -91,17 +117,29 @@ class HomeScreenState(
 
     val sections = flow {
         products().collect { products ->
-            val sections = mutableMapOf("Todos produtos" to products) +
-                    Category.values().associate { category ->
-                        category.label to products.filter { product ->
-                            product.categories.contains(
-                                category
-                            )
-                        }
-                    }
+            val sections: Map<String, List<Product>> =
+                if (products.isEmpty()) {
+                    emptyMap()
+                } else {
+                    mutableMapOf("Todos produtos" to products) +
+                            sectionsByCategory(products)
+                }
             emit(sections)
         }
     }
+
+    private fun sectionsByCategory(products: List<Product>) =
+        Category.values().associate { category ->
+            val filteredProducts = products
+                .filter { product ->
+                    product.categories.contains(
+                        category
+                    )
+                }
+            category.label to filteredProducts
+        }.filterValues {
+            it.isNotEmpty()
+        }
 
     fun filterProducts(text: String) = flow {
         if (text.isNotBlank()) {
@@ -109,11 +147,10 @@ class HomeScreenState(
                 products.name.contains(
                     text,
                     ignoreCase = true,
-                ) ||
-                        products.description?.contains(
-                            text,
-                            ignoreCase = true,
-                        ) ?: false
+                ) || products.description?.contains(
+                    text,
+                    ignoreCase = true,
+                ) ?: false
             }
             emit(filteredProducts)
         }
@@ -143,6 +180,20 @@ fun HomeScreenWithSearchTextPreview() {
                 sections = sampleSections,
                 searchedProducts = sampleProducts,
                 searchText = "a",
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenWithEmptyContent() {
+    AluveryTheme {
+        Surface {
+            HomeScreen(
+                sections = emptyMap(),
+                searchedProducts = listOf(),
+                searchText = ""
             )
         }
     }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class ProductDao {
 
     companion object {
-        private val dataset = sampleProducts.toMutableList()
+        private val dataset = mutableListOf<Product>()
         private val productsFlow = MutableStateFlow<List<Product>>(dataset.toList())
     }
 
@@ -19,7 +19,7 @@ class ProductDao {
         dataset.indexOfFirst {
             product.id == it.id
         }.let { index ->
-            if(index > -1) {
+            if (index > -1) {
                 dataset[index] = product
             } else {
                 dataset.add(product)

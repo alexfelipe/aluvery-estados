@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Surface
@@ -15,6 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,6 +80,10 @@ fun ProductFormScreen() {
             label = {
                 Text(text = "Url da imagem")
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Uri,
+                imeAction = ImeAction.Next
+            )
         )
         var name by remember {
             mutableStateOf("")
@@ -90,6 +97,10 @@ fun ProductFormScreen() {
             label = {
                 Text(text = "Nome")
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
         )
         var price by remember {
             mutableStateOf("")
@@ -103,6 +114,10 @@ fun ProductFormScreen() {
             label = {
                 Text(text = "Preço")
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = ImeAction.Next
+            )
         )
         var description by remember {
             mutableStateOf("")
@@ -118,6 +133,9 @@ fun ProductFormScreen() {
             label = {
                 Text(text = "Descrição")
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text
+            )
         )
         Button(
             onClick = {

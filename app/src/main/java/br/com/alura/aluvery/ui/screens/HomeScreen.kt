@@ -19,6 +19,7 @@ import br.com.alura.aluvery.ui.theme.AluveryTheme
 class HomeScreenUiState(searchText: String = "") {
 
     var text by mutableStateOf(searchText)
+        private set
 
     val searchedProducts get() =
         if (text.isNotBlank()) {
@@ -38,26 +39,25 @@ class HomeScreenUiState(searchText: String = "") {
         return text.isBlank()
     }
 
+    val onSearchChange: (String) -> Unit = { searchText ->
+        text = searchText
+    }
+
 }
 
 @Composable
 fun HomeScreen(
     sections: Map<String, List<Product>>,
-    searchText: String = ""
+    state: HomeScreenUiState = HomeScreenUiState()
 ) {
     Column {
-        val state = remember {
-            HomeScreenUiState(searchText)
-        }
         val text = state.text
         val searchedProducts = remember(text) {
             state.searchedProducts
         }
         SearchTextField(
             searchText = text,
-            onSearchChange = {
-                state.text = it
-            },
+            onSearchChange = state.onSearchChange,
             Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
@@ -109,7 +109,7 @@ fun HomeScreenWithSearchTextPreview() {
         Surface {
             HomeScreen(
                 sampleSections,
-                searchText = "a",
+                state = HomeScreenUiState(searchText = "a"),
             )
         }
     }

@@ -16,45 +16,60 @@ import br.com.alura.aluvery.ui.components.ProductsSection
 import br.com.alura.aluvery.ui.components.SearchTextField
 import br.com.alura.aluvery.ui.theme.AluveryTheme
 
+class HomeScreenUiState(searchText: String = "") {
+
+    var text by mutableStateOf(searchText)
+
+    val searchedProducts get() =
+        if (text.isNotBlank()) {
+            sampleProducts.filter { product ->
+                product.name.contains(
+                    text,
+                    ignoreCase = true,
+                ) ||
+                        product.description?.contains(
+                            text,
+                            ignoreCase = true,
+                        ) ?: false
+            }
+        } else emptyList()
+
+    fun isShowSections(): Boolean {
+        return text.isBlank()
+    }
+
+}
+
 @Composable
 fun HomeScreen(
     sections: Map<String, List<Product>>,
     searchText: String = ""
 ) {
     Column {
-        var text by remember {
-            mutableStateOf(searchText)
+        val state = remember {
+            HomeScreenUiState(searchText)
+        }
+        val text = state.text
+        val searchedProducts = remember(text) {
+            state.searchedProducts
         }
         SearchTextField(
             searchText = text,
             onSearchChange = {
-                text = it
+                state.text = it
             },
             Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
         )
-        val searchedProducts = remember(text) {
-            if (text.isNotBlank()) {
-                sampleProducts.filter { product ->
-                    product.name.contains(
-                        text,
-                        ignoreCase = true,
-                    ) ||
-                            product.description?.contains(
-                                text,
-                                ignoreCase = true,
-                            ) ?: false
-                }
-            } else emptyList()
-        }
+
         LazyColumn(
             Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            if (text.isBlank()) {
+            if (state.isShowSections()) {
                 for (section in sections) {
                     val title = section.key
                     val products = section.value

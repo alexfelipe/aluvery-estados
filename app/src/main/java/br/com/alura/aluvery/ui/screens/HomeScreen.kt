@@ -16,24 +16,28 @@ import br.com.alura.aluvery.ui.components.ProductsSection
 import br.com.alura.aluvery.ui.components.SearchTextField
 import br.com.alura.aluvery.ui.theme.AluveryTheme
 
-class HomeScreenUiState(searchText: String = "") {
+class HomeScreenUiState(
+    val sections: Map<String, List<Product>> = emptyMap(),
+    searchText: String = ""
+) {
 
     var text by mutableStateOf(searchText)
         private set
 
-    val searchedProducts get() =
-        if (text.isNotBlank()) {
-            sampleProducts.filter { product ->
-                product.name.contains(
-                    text,
-                    ignoreCase = true,
-                ) ||
-                        product.description?.contains(
-                            text,
-                            ignoreCase = true,
-                        ) ?: false
-            }
-        } else emptyList()
+    val searchedProducts
+        get() =
+            if (text.isNotBlank()) {
+                sampleProducts.filter { product ->
+                    product.name.contains(
+                        text,
+                        ignoreCase = true,
+                    ) ||
+                            product.description?.contains(
+                                text,
+                                ignoreCase = true,
+                            ) ?: false
+                }
+            } else emptyList()
 
     fun isShowSections(): Boolean {
         return text.isBlank()
@@ -47,10 +51,10 @@ class HomeScreenUiState(searchText: String = "") {
 
 @Composable
 fun HomeScreen(
-    sections: Map<String, List<Product>>,
     state: HomeScreenUiState = HomeScreenUiState()
 ) {
     Column {
+        val sections = state.sections
         val text = state.text
         val searchedProducts = remember(text) {
             state.searchedProducts
@@ -97,7 +101,7 @@ fun HomeScreen(
 private fun HomeScreenPreview() {
     AluveryTheme {
         Surface {
-            HomeScreen(sampleSections)
+            HomeScreen(HomeScreenUiState(sections = sampleSections))
         }
     }
 }
@@ -108,8 +112,10 @@ fun HomeScreenWithSearchTextPreview() {
     AluveryTheme {
         Surface {
             HomeScreen(
-                sampleSections,
-                state = HomeScreenUiState(searchText = "a"),
+                state = HomeScreenUiState(
+                    searchText = "a",
+                    sections = sampleSections
+                ),
             )
         }
     }

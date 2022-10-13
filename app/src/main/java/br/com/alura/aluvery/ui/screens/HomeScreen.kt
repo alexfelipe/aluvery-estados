@@ -18,6 +18,7 @@ import br.com.alura.aluvery.ui.theme.AluveryTheme
 
 class HomeScreenUiState(
     val sections: Map<String, List<Product>> = emptyMap(),
+    private val products: List<Product> = emptyList(),
     searchText: String = ""
 ) {
 
@@ -25,19 +26,20 @@ class HomeScreenUiState(
         private set
 
     val searchedProducts
-        get() =
-            if (text.isNotBlank()) {
-                sampleProducts.filter { product ->
-                    product.name.contains(
-                        text,
-                        ignoreCase = true,
-                    ) ||
-                            product.description?.contains(
-                                text,
-                                ignoreCase = true,
-                            ) ?: false
-                }
-            } else emptyList()
+        get() = if (text.isNotBlank()) {
+            sampleProducts.filter(containsInNameOrDescrioption()) +
+                    products.filter(containsInNameOrDescrioption())
+        } else emptyList()
+
+    private fun containsInNameOrDescrioption() = { product: Product ->
+        product.name.contains(
+            text,
+            ignoreCase = true,
+        ) || product.description?.contains(
+            text,
+            ignoreCase = true,
+        ) ?: false
+    }
 
     fun isShowSections(): Boolean {
         return text.isBlank()

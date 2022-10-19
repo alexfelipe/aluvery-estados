@@ -21,23 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.alura.aluvery.R
 import br.com.alura.aluvery.model.Product
+import br.com.alura.aluvery.ui.states.ProductFormUiState
 import br.com.alura.aluvery.ui.theme.AluveryTheme
 import coil.compose.AsyncImage
 import java.math.BigDecimal
 import java.text.DecimalFormat
-
-class ProductFormUiState(
-    val url: String = "",
-    val name: String = "",
-    val price: String = "",
-    val description: String = "",
-    val isShowPreview: Boolean = url.isNotBlank(),
-    val onUrlChange: (String) -> Unit = {},
-    val onNameChange: (String) -> Unit = {},
-    val onDescriptionChange: (String) -> Unit = {},
-    val onPriceChange: (String) -> Unit = {},
-    val onSaveClick: () -> Unit = {},
-)
 
 @Composable
 fun ProductFormScreen(

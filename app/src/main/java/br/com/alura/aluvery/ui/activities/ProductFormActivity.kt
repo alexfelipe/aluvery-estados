@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.Surface
+import androidx.lifecycle.lifecycleScope
 import br.com.alura.aluvery.dao.ProductDao
 import br.com.alura.aluvery.ui.screens.ProductFormScreen
 import br.com.alura.aluvery.ui.theme.AluveryTheme
+import kotlinx.coroutines.launch
 
 class ProductFormActivity : ComponentActivity() {
 
@@ -19,8 +21,10 @@ class ProductFormActivity : ComponentActivity() {
                 Surface {
                     ProductFormScreen(
                         onSaveClick = { product ->
-                            dao.save(product)
-                            finish()
+                            lifecycleScope.launch {
+                                dao.save(product)
+                                finish()
+                            }
                         })
                 }
             }

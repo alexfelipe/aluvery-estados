@@ -1,36 +1,38 @@
 package br.com.alura.aluvery.ui.viewmodels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.alura.aluvery.dao.ProductDao
 import br.com.alura.aluvery.model.Product
 import br.com.alura.aluvery.ui.states.HomeScreenUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel : ViewModel() {
 
     private val dao = ProductDao()
 
-    var uiState: HomeScreenUiState by mutableStateOf(
-        HomeScreenUiState(
-            onSearchChange = {
-                uiState = uiState.copy(
-                    searchText = it
-                )
-                uiState = uiState.copy(
-                    searchedProducts = searchedProducts()
-                )
-            },
-        )
-    )
-        private set
+    private var _uiState: MutableStateFlow<HomeScreenUiState> =
+        MutableStateFlow(HomeScreenUiState())
+    val uiState: StateFlow<HomeScreenUiState> get() = _uiState
 
     init {
         viewModelScope.launch {
             searchSections()
+        }
+        _uiState.update { uiState ->
+            uiState.copy(
+                onSearchChange = {
+                    _uiState.value = _uiState.value.copy(
+                        searchText = it
+                    )
+                    _uiState.value = _uiState.value.copy(
+                        searchedProducts = searchedProducts()
+                    )
+                }
+            )
         }
     }
 
@@ -40,7 +42,7 @@ class HomeScreenViewModel : ViewModel() {
 
     private suspend fun searchSections() {
         dao.products().collect {
-            uiState = uiState.copy(
+            _uiState.value = _uiState.value.copy(
                 sections = mapOf("Todos produtos" to it),
                 searchedProducts = searchedProducts()
             )
@@ -49,10 +51,10 @@ class HomeScreenViewModel : ViewModel() {
 
     private fun containsInNameOrDescrioption() = { product: Product ->
         product.name.contains(
-            uiState.searchText,
+            _uiState.value.searchText,
             ignoreCase = true,
         ) || product.description?.contains(
-            uiState.searchText,
+            _uiState.value.searchText,
             ignoreCase = true,
         ) ?: false
     }

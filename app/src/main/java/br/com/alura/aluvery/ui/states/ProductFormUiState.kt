@@ -1,6 +1,6 @@
 package br.com.alura.aluvery.ui.states
 
-class ProductFormUiState(
+data class ProductFormUiState(
     val url: String = "",
     val name: String = "",
     val price: String = "",
@@ -9,6 +9,5 @@ class ProductFormUiState(
     val onUrlChange: (String) -> Unit = {},
     val onNameChange: (String) -> Unit = {},
     val onDescriptionChange: (String) -> Unit = {},
-    val onPriceChange: (String) -> Unit = {},
-    val onSaveClick: () -> Unit = {},
+    val onPriceChange: (String) -> Unit = {}
 )

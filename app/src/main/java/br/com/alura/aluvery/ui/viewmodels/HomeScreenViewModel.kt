@@ -25,10 +25,10 @@ class HomeScreenViewModel : ViewModel() {
         _uiState.update { uiState ->
             uiState.copy(
                 onSearchChange = {
-                    _uiState.value = uiState.copy(
+                    _uiState.value = _uiState.value.copy(
                         searchText = it
                     )
-                    _uiState.value = uiState.copy(
+                    _uiState.value = _uiState.value.copy(
                         searchedProducts = searchedProducts()
                     )
                 }

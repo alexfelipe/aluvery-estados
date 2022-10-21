@@ -39,7 +39,6 @@ fun HomeScreen(
                 .padding(16.dp)
                 .fillMaxWidth(),
         )
-
         LazyColumn(
             Modifier
                 .fillMaxSize(),

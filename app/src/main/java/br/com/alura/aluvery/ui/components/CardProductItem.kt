@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -29,7 +30,7 @@ fun CardProductItem(
     elevation: Dp = 4.dp,
     isExpanded: Boolean = false
 ) {
-    var expanded by remember {
+    var expanded by rememberSaveable {
         mutableStateOf(isExpanded)
     }
     Card(

@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,7 +40,7 @@ fun HomeScreen(products: List<Product>) {
         "Doces" to sampleCandies,
         "Bebidas" to sampleDrinks
     )
-    var text by remember {
+    var text by rememberSaveable {
         mutableStateOf("")
     }
 
@@ -84,9 +85,9 @@ fun HomeScreen(
         SearchTextField(
             searchText = text,
             onSearchChange = state.onSearchChange,
-            Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+                Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
         )
 
         LazyColumn(

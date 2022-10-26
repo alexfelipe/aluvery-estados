@@ -11,6 +11,7 @@ import br.com.alura.aluvery.sampledata.sampleCandies
 import br.com.alura.aluvery.sampledata.sampleDrinks
 import br.com.alura.aluvery.sampledata.sampleProducts
 import br.com.alura.aluvery.ui.screens.HomeScreenUiState
+import java.math.BigDecimal
 
 class HomeScreenViewModel : ViewModel() {
 
@@ -49,5 +50,14 @@ class HomeScreenViewModel : ViewModel() {
             sampleProducts.filter(containsInNameOrDescrioption(text)) +
                     dao.products().filter(containsInNameOrDescrioption(text))
         } else emptyList()
+
+    fun findProducts() {
+        uiState = uiState.copy(sections = mapOf(
+            "Todos produtos" to listOf(sampleProducts.random()),
+            "Promoções" to sampleDrinks + sampleCandies,
+            "Doces" to sampleCandies,
+            "Bebidas" to sampleDrinks
+        ))
+    }
 
 }

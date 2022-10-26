@@ -20,7 +20,7 @@ import br.com.alura.aluvery.ui.components.SearchTextField
 import br.com.alura.aluvery.ui.theme.AluveryTheme
 import br.com.alura.aluvery.ui.viewmodels.HomeScreenViewModel
 
-class HomeScreenUiState(
+data class HomeScreenUiState(
     val sections: Map<String, List<Product>> = emptyMap(),
     val searchedProducts: List<Product> = emptyList(),
     val searchText: String = "",
@@ -35,36 +35,8 @@ class HomeScreenUiState(
 
 @Composable
 fun HomeScreen(
-    products: List<Product>,
     viewModel: HomeScreenViewModel
 ) {
-    val sections = mapOf(
-        "Todos produtos" to products,
-        "Promoções" to sampleDrinks + sampleCandies,
-        "Doces" to sampleCandies,
-        "Bebidas" to sampleDrinks
-    )
-    var text by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    fun containsInNameOrDescrioption() = { product: Product ->
-        product.name.contains(
-            text,
-            ignoreCase = true,
-        ) || product.description?.contains(
-            text,
-            ignoreCase = true,
-        ) ?: false
-    }
-
-    val searchedProducts = remember(text, products) {
-        if (text.isNotBlank()) {
-            sampleProducts.filter(containsInNameOrDescrioption()) +
-                    products.filter(containsInNameOrDescrioption())
-        } else emptyList()
-    }
-
     val state = viewModel.uiState
     HomeScreen(state = state)
 }

@@ -25,7 +25,6 @@ import br.com.alura.aluvery.ui.viewmodels.HomeScreenViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val dao = ProductDao()
     private val viewModel: HomeScreenViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,10 +38,8 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             }) {
-                val products = dao.products()
                 HomeScreen(
                     viewModel = viewModel,
-                    products = products
                 )
             }
         }

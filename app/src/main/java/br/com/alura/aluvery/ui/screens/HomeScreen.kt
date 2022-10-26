@@ -18,6 +18,7 @@ import br.com.alura.aluvery.ui.components.CardProductItem
 import br.com.alura.aluvery.ui.components.ProductsSection
 import br.com.alura.aluvery.ui.components.SearchTextField
 import br.com.alura.aluvery.ui.theme.AluveryTheme
+import br.com.alura.aluvery.ui.viewmodels.HomeScreenViewModel
 
 class HomeScreenUiState(
     val sections: Map<String, List<Product>> = emptyMap(),
@@ -33,7 +34,10 @@ class HomeScreenUiState(
 }
 
 @Composable
-fun HomeScreen(products: List<Product>) {
+fun HomeScreen(
+    products: List<Product>,
+    viewModel: HomeScreenViewModel
+) {
     val sections = mapOf(
         "Todos produtos" to products,
         "Promoções" to sampleDrinks + sampleCandies,
@@ -61,16 +65,7 @@ fun HomeScreen(products: List<Product>) {
         } else emptyList()
     }
 
-    val state = remember(products, text) {
-        HomeScreenUiState(
-            sections = sections,
-            searchedProducts = searchedProducts,
-            searchText = text,
-            onSearchChange = {
-                text = it
-            }
-        )
-    }
+    val state = viewModel.uiState
     HomeScreen(state = state)
 }
 
@@ -85,9 +80,9 @@ fun HomeScreen(
         SearchTextField(
             searchText = text,
             onSearchChange = state.onSearchChange,
-                Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
         )
 
         LazyColumn(

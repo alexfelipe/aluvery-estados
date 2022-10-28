@@ -37,19 +37,8 @@ data class HomeScreenUiState(
 fun HomeScreen(
     viewModel: HomeScreenViewModel
 ) {
-    var test by remember {
-        mutableStateOf("")
-    }
-    Log.i("HomeScreen", "recomposition: $test")
-    viewModel.findProducts()
     val state = viewModel.uiState
-    Column {
-        Button(onClick = { test = Random.nextInt().toString() }) {
-            Text(text = test)
-        }
-        HomeScreen(state = state)
-    }
-
+    HomeScreen(state = state)
 }
 
 @Composable

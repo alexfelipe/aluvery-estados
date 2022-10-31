@@ -7,7 +7,7 @@ import br.com.alura.aluvery.model.Product
 import br.com.alura.aluvery.sampledata.sampleCandies
 import br.com.alura.aluvery.sampledata.sampleDrinks
 import br.com.alura.aluvery.sampledata.sampleProducts
-import br.com.alura.aluvery.ui.screens.HomeScreenUiState
+import br.com.alura.aluvery.ui.states.HomeScreenUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

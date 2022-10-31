@@ -16,10 +16,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import br.com.alura.aluvery.dao.ProductDao
 import br.com.alura.aluvery.sampledata.sampleSections
 import br.com.alura.aluvery.ui.screens.HomeScreen
-import br.com.alura.aluvery.ui.screens.HomeScreenUiState
+import br.com.alura.aluvery.ui.states.HomeScreenUiState
 import br.com.alura.aluvery.ui.theme.AluveryTheme
 import br.com.alura.aluvery.ui.viewmodels.HomeScreenViewModel
 
@@ -70,6 +69,8 @@ fun App(
 @Composable
 fun AppPreview() {
     App {
-        HomeScreen(HomeScreenUiState(sections = sampleSections))
+        HomeScreen(
+            HomeScreenUiState(sections = sampleSections)
+        )
     }
 }
